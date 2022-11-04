@@ -1,0 +1,78 @@
+import pygame
+import sys
+from pygame import *
+
+pygame.init()
+
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+
+player1Score = 0
+player2Score = 0
+
+scoreFont = pygame.font.Font('freesansbold.ttf', 20)
+gameOverFont = pygame.font.Font('freesansbold.ttf', 40)
+
+def boundaries():
+    pygame.draw.line(display, WHITE, (0, 50), (800, 50))
+
+def show_score(player1Score, player2Score):
+    score1 = scoreFont.render(str(player1Score), True, GREEN)
+    score2 = scoreFont.render(str(player2Score), True, RED)
+    display.blit(score1, (300, 25))
+    display.blit(score2, (500, 25))
+
+def game_over_score(player1Score, player2Score):
+    player1Wins = gameOverFont.render('Player 1 Wins!', True, GREEN)
+    player2Wins = gameOverFont.render('Player 2 Wins!', True, RED)
+    if player1Score == 10:
+        display.blit(player1Wins, (400, 300))
+    elif player2Score == 10:
+        display.blit(player2Wins, (400, 300))
+
+def create_ball():
+    pygame.draw.rect(display, WHITE, pygame.Rect(400, 300, 20, 20))
+
+def player1_paddle(x, y):
+    pygame.draw.rect(display, GREEN, (x, y, 15, 70))
+
+def player2_paddle(x, y):
+    pygame.draw.rect(display, RED, (x, y, 15, 70))
+
+def draw_all():
+    show_score(player1Score, player2Score)
+    create_ball()
+    player1_paddle(player1_X, player1_Y)
+    player2_paddle(player2_X, player2_Y)
+    boundaries()
+    pygame.display.update()
+
+display = pygame.display.set_mode((800,600))
+
+player1_X = 0
+player2_X = 785
+player1_change = 0
+player2_change = 0
+player1_Y = 275
+player2_Y = 275
+movementSpeed = 5
+
+pygame.display.set_caption('Pong')
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+        draw_all()
+        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                player1_change += movementSpeed
+            if event.key == pygame.K_a:
+                player1_change -= movementSpeed
+            if event.key == pygame.K_p:
+                player2_change += movementSpeed
+            if event.key == pygame.K_l:
+                player2_change -= movementSpeed
