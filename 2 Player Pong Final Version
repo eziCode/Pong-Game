@@ -1,0 +1,85 @@
+from shutil import move
+import pygame
+import sys
+import random
+
+pygame.init()
+fps=150
+fpsclock=pygame.time.Clock()
+sur_obj=pygame.display.set_mode((800,600))
+pygame.display.set_caption("Pong")
+WHITE=(255,255,255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+player1Y = 265
+player2Y = 265
+movementSpeed = 7
+player1Score = 0
+player2Score = 0
+font = pygame.font.Font('freesansbold.ttf', 20)
+xSpeed = 2
+ySpeed = 2
+
+ball = pygame.Rect(390, 290, 20, 20)
+x_speed, y_speed = 1, 1
+
+def count_score(player1Score, player2Score):
+    player1ScoreText = font.render(str(player1Score), True, GREEN)
+    player2ScoreText = font.render(str(player2Score), True, RED)
+    sur_obj.blit(player1ScoreText, (300, 25))
+    sur_obj.blit(player2ScoreText, (500, 25))
+
+def upper_boundary():
+    pygame.draw.line(sur_obj, WHITE, (0, 50), (800, 50))
+
+while True:
+    sur_obj.fill(BLACK)
+    pygame.draw.rect(sur_obj, GREEN, (0, player1Y, 15, 70))
+    pygame.draw.rect(sur_obj, RED, (785, player2Y, 15, 70))
+    count_score(player1Score, player2Score)
+    upper_boundary()
+    for eve in pygame.event.get():
+        if eve.type==pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    if ball.y >= 580:
+        y_speed = -1
+    if ball.y <= 50:
+        y_speed = 1
+    if ball.x <= 0:
+        player2Score += 1
+        ball.center = (400, 300)
+        x_speed, y_speed = random.choice([1, -1]), random.choice([1, -1])
+    if ball.x >= 800:
+        player1Score += 1
+        ball.center = (400, 300)
+        x_speed, y_speed = random.choice([1, -1]), random.choice([1, -1])
+    if ball.x <= 15 and ball.y in range(player1Y, player1Y + 70):
+        x_speed = 1
+    if 785 - ball.width <= ball.x <= 785 and ball.y in range(player2Y, player2Y + 70):
+        x_speed = -1
+
+    ball.x += x_speed * 2
+    ball.y += y_speed * 2
+    pygame.draw.circle(sur_obj, WHITE, ball.center, 10)
+
+    if 530 < player1Y:
+        player1Y = 530
+    if player1Y < 50:
+        player1Y = 50
+    if 530 < player2Y:
+        player2Y = 530
+    if player2Y < 50:
+        player2Y = 50
+    key_input = pygame.key.get_pressed()   
+    if key_input[pygame.K_q]:
+        player1Y -= movementSpeed
+    if key_input[pygame.K_a]:
+        player1Y += movementSpeed
+    if key_input[pygame.K_p]:
+        player2Y -= movementSpeed
+    if key_input[pygame.K_l]:
+        player2Y += movementSpeed
+    pygame.display.update()
+    fpsclock.tick(fps)
